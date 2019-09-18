@@ -4,13 +4,33 @@
       <img class="theodo-logo" alt="Theodo logo" src="./assets/theodo-logo.png">
       <img class="vue-logo" alt="Vue logo" src="./assets/vue-logo.png">
     </div>
+    <Grid v-bind:rows-count="this.rowsCount" v-bind:columns-count="this.columnsCount" v-bind:alive-cells-map="this.aliveCellsMap/>
   </div>
 </template>
 
 <script>
-
+import Grid from './Grid.vue'
+const initialRowsCount = 100
 export default {
-  name: 'GameOfLife'
+  name: 'GameOfLife',
+  components: {Grid},
+  data: function() {
+    return  {
+      rowsCount: initialRowsCount,
+      aliveCellsMap: {
+        R6C15: true,
+        R9C13: true,
+        R8C18: true,
+        R1C25: true,
+        R5C24: true,
+      }
+    };
+  },
+  computed: {
+    columnsCount: function() {
+      return 3 * this.rowsCount;
+    }
+  },
 }
 </script>
 
