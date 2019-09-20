@@ -1,10 +1,11 @@
 <template>
-  <div class="grid__container" :style="`width:${width}px; height:${height}px; --rows:${rowsCount}; --columns:${columnsCount};`">
-    <Cell v-for="x in cellsCount" :key="x"/>
+  <div class="grid__container" :style="`--rows:${rowsCount}; --columns:${columnsCount};`">
+    <Cell v-for="x in cellsCount" :key="x" v-bind:is-alive="isCellAlive(getCellIdFromIndex(x, columnsCount))" @click.native="toggleStateCallback(getCellIdFromIndex(x, columnsCount))"/>
   </div>
 </template>
 
 <script>
+import { getCellIdFromIndex } from './services/grid-helper.js'
 import Cell from './Cell.vue'
 export default {
     name: "Grid",
@@ -20,6 +21,9 @@ export default {
         },
         aliveCellsMap: {
             type: Object
+        },
+        toggleStateCallback: {
+          type: Function
         }
     },
     computed: {
@@ -36,7 +40,8 @@ export default {
   methods: {
     isCellAlive: function (index) {
       return index in this.aliveCellsMap
-    }
+    },
+    getCellIdFromIndex
   }
 }
 </script>
@@ -44,8 +49,9 @@ export default {
 <style>
 .grid__container {
   /* width: var(--columns) * 10px; */
-  /* height: 30vw; */
-  /* margin: auto; */
+  width: 90vw;
+  height: 30vw;
+  margin: auto;
   display: grid;
   border: solid 1px black;
   background-color: black;

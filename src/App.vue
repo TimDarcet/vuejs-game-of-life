@@ -4,13 +4,27 @@
       <img class="theodo-logo" alt="Theodo logo" src="./assets/theodo-logo.png">
       <img class="vue-logo" alt="Vue logo" src="./assets/vue-logo.png">
     </div>
-    <Grid v-bind:rows-count="this.rowsCount" v-bind:columns-count="this.columnsCount" v-bind:alive-cells-map="this.aliveCellsMap/>
+    <div class="buttons-container">
+      <button @click="randomizeMap()">Random</button>
+    </div>
+    <div class="buttons-container">
+      <button @click="updateAliveCellsMap()">Next</button>
+    </div>
+    <div class="buttons-container">
+      <button @click="killAll()">Kill</button>
+    </div>
+    <div class="buttons-container">
+      <button @click="live()">Live</button>
+    </div>
+    <Grid v-bind:toggleStateCallback="this.toggleCellState" v-bind:rows-count="this.rowsCount" v-bind:columns-count="this.columnsCount" v-bind:alive-cells-map="this.aliveCellsMap"/>
   </div>
 </template>
 
 <script>
 import Grid from './Grid.vue'
-const initialRowsCount = 100
+import { getRandomizedMap } from './services/grid-helper.js'
+import { getNextMap } from './services/conway-rules.js'
+const initialRowsCount = 50
 export default {
   name: 'GameOfLife',
   components: {Grid},
@@ -31,6 +45,32 @@ export default {
       return 3 * this.rowsCount;
     }
   },
+  methods: {
+    randomizeMap: function() {
+      this.aliveCellsMap = getRandomizedMap(this.rowsCount, this.columnsCount);
+    },
+    toggleCellState: function(id) {
+      const newAliveCellsMap = {}
+      for (let [key, value] of Object.entries(this.aliveCellsMap)) {
+        if (key != id) {
+          newAliveCellsMap[key] = value
+        }
+      }
+      if (!(id in this.aliveCellsMap)) {
+        newAliveCellsMap[id] = true;
+      }
+      this.aliveCellsMap = newAliveCellsMap;
+    },
+    updateAliveCellsMap: function() {
+      this.aliveCellsMap = getNextMap(this.rowsCount, this.columnsCount, this.aliveCellsMap);
+    },
+    killAll: function() {
+      this.aliveCellsMap = Object();
+    },
+    live: function() {
+      setInterval(this.updateAliveCellsMap, 100);
+    }
+  }
 }
 </script>
 
@@ -49,5 +89,12 @@ export default {
 }
 .logos-container img + img {
   margin-left: 5px;
+}
+.buttons-container {
+  width: 65px;
+  margin: 10px;
+  padding: 5px 10px;
+  border-radius: 5px;
+  background-color: rgba(220, 220, 220, 0.5);
 }
 </style>

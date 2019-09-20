@@ -1,4 +1,4 @@
-import { getCellId } from './grid-helper'
+import { getCellId, getCellIdFromIndex } from './grid-helper'
 
 /**
  * This function returns the Ids of the directly nearby cells
@@ -27,9 +27,13 @@ const getNeighbours = (row, column) => {
  * @param {Object}  aliveCellsMap
  */
 const getAliveNeighboursCount = (row, column, aliveCellsMap) => {
-  /*
-    INSERT YOUR CODE HERE
-  */
+  var count = 0;
+  for (var id of getNeighbours(row, column)) {
+    if (id in aliveCellsMap) {
+      count++;
+    }
+  }
+  return count;
 }
 
 /**
@@ -39,9 +43,12 @@ const getAliveNeighboursCount = (row, column, aliveCellsMap) => {
  * @param {Object}  aliveNeighboursCount
  */
 const getCellNextState = (isAliveCell, aliveNeighboursCount) => {
-  /*
-    INSERT YOUR CODE HERE
-  */
+  if ((aliveNeighboursCount == 3) || (aliveNeighboursCount == 2 && isAliveCell)) {
+    return true;
+  }
+  else {
+    return false;
+  }
 }
 
 /**
@@ -52,7 +59,14 @@ const getCellNextState = (isAliveCell, aliveNeighboursCount) => {
  * @param {Object}  aliveCellsMap
  */
 export const getNextMap = (rowsCount, columnsCount, aliveCellsMap) => {
-  /*
-    INSERT YOUR CODE HERE
-  */
+  const newMap = Object();
+  for (var i = 0; i < columnsCount; i++) {
+    for (var j = 0; j < rowsCount; j++) {
+      var id = getCellId(j, i);
+      if (getCellNextState(id in aliveCellsMap, getAliveNeighboursCount(j, i, aliveCellsMap))) {
+        newMap[id] = true;
+      }
+    }
+  }
+  return newMap;
 }
