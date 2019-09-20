@@ -1,5 +1,7 @@
 # game-of-life
 
+A simple game of life in Vue.js, done with Theodo
+
 ## Project setup
 ```
 npm install
